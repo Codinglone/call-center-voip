@@ -1,0 +1,30 @@
+# Kinyarwanda Chatbot Service Dependencies
+
+# Web framework
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+pydantic==2.5.0
+
+# Machine Learning frameworks
+torch==2.1.1
+transformers==4.35.2
+
+# Audio processing
+numpy==1.26.2
+soundfile==0.12.1
+librosa==0.10.1
+
+# Voice Activity Detection
+webrtcvad==2.0.10
+
+# Text processing
+sentencepiece==0.1.99
+
+# Monitoring and logging
+prometheus-client==0.19.0
+python-json-logger==2.0.7
+
+# Testing
+pytest==7.4.3
+pytest-asyncio==0.21.1
+httpx==0.25.2

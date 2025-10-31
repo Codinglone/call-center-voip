@@ -1,0 +1,66 @@
+# Environment variables
+.env
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
+venv/
+ENV/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Docker
+*.log
+
+# Models (large files)
+chatbots/kinyarwanda/models/*.bin
+chatbots/kinyarwanda/models/*.pt
+chatbots/kinyarwanda/models/*.pth
+chatbots/kinyarwanda/models/*.h5
+
+# Asterisk
+asterisk/config/*.conf
+!asterisk/config/.gitkeep
+
+# Logs
+logs/
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+
+# Redis
+dump.rdb

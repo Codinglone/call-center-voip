@@ -1,0 +1,125 @@
+version: '3.8'
+
+services:
+  # Asterisk telephony server
+  asterisk:
+    build:
+      context: ./asterisk
+      dockerfile: Dockerfile
+    container_name: asterisk-server
+    ports:
+      - "5060:5060/udp"  # SIP signaling
+      - "10000-10100:10000-10100/udp"  # RTP media
+      - "8088:8088/tcp"  # ARI interface
+    volumes:
+      - ./asterisk/config:/etc/asterisk
+      - ./asterisk/sounds:/var/lib/asterisk/sounds
+      - asterisk-logs:/var/log/asterisk
+    networks:
+      - voice-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "/usr/local/bin/health-check.sh"]
+      interval: 30s
+      timeout: 10s
+      start_period: 40s
+      retries: 3
+
+  # Redis for session state management
+  redis:
+    image: redis:7-alpine
+    container_name: redis-cache
+    ports:
+      - "6379:6379"
+    networks:
+      - voice-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  # Chatbot orchestrator service
+  orchestrator:
+    build:
+      context: ./orchestrator
+      dockerfile: Dockerfile
+    container_name: chatbot-orchestrator
+    ports:
+      - "8000:8000"
+    environment:
+      - REDIS_URL=redis://redis:6379
+      - ENGLISH_BOT_URL=http://english-bot:8001
+      - KINYARWANDA_BOT_URL=http://kinyarwanda-bot:8002
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+      - SESSION_TIMEOUT=${SESSION_TIMEOUT:-300}
+    depends_on:
+      - redis
+    networks:
+      - voice-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # English voice chatbot service
+  english-bot:
+    build:
+      context: ./chatbots/english
+      dockerfile: Dockerfile
+    container_name: english-chatbot
+    ports:
+      - "8001:8001"
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - OPENAI_MODEL=${OPENAI_MODEL:-gpt-4}
+      - STT_SERVICE=${STT_SERVICE:-whisper}
+      - TTS_SERVICE=${TTS_SERVICE:-openai}
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+    networks:
+      - voice-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Kinyarwanda voice chatbot service
+  kinyarwanda-bot:
+    build:
+      context: ./chatbots/kinyarwanda
+      dockerfile: Dockerfile
+    container_name: kinyarwanda-chatbot
+    ports:
+      - "8002:8002"
+    environment:
+      - MODEL_PATH=/models
+      - STT_MODEL=${KINYARWANDA_STT_MODEL:-kinyarwanda-stt}
+      - LLM_MODEL=${KINYARWANDA_LLM_MODEL:-kinyarwanda-llm}
+      - TTS_MODEL=${KINYARWANDA_TTS_MODEL:-kinyarwanda-tts}
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+    volumes:
+      - ./chatbots/kinyarwanda/models:/models
+    networks:
+      - voice-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8002/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+networks:
+  voice-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
+
+volumes:
+  redis-data:
+  asterisk-logs:
