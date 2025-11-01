@@ -331,9 +331,6 @@ docker-compose logs orchestrator
 - Rate limiting on chatbot endpoints
 - Network segmentation via Docker networks
 
-## License
-
-[Your License Here]
 
 ## Support
 
