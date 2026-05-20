@@ -1,0 +1,18 @@
+# GitHub Linguist overrides
+# Mark non-application code so language stats reflect the real project
+
+# Documentation
+docs/**           linguist-documentation
+*.md              linguist-documentation
+
+# Utility/test scripts (not core application code)
+scripts/**        linguist-documentation
+asterisk/health-check.sh  linguist-documentation
+
+# Test files
+tests/**          linguist-documentation
+
+# Config files (don't count as a language)
+*.conf            linguist-documentation
+*.yml             linguist-documentation
+*.yaml            linguist-documentation
