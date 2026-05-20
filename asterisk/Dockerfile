@@ -16,8 +16,8 @@ RUN mkdir -p /etc/asterisk \
     /var/spool/asterisk \
     /var/run/asterisk
 
-# Copy configuration files
-COPY config/*.conf /etc/asterisk/
+# Copy configuration files (if any exist)
+COPY config/ /etc/asterisk/
 
 # Create health check script
 COPY health-check.sh /usr/local/bin/health-check.sh

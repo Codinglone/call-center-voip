@@ -45,8 +45,8 @@ chatbots/kinyarwanda/models/*.pth
 chatbots/kinyarwanda/models/*.h5
 
 # Asterisk
-asterisk/config/*.conf
-!asterisk/config/.gitkeep
+# asterisk/config/*.conf
+# !asterisk/config/.gitkeep
 
 # Logs
 logs/
