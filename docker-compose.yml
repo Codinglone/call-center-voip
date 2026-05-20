@@ -13,7 +13,8 @@ services:
       - "8088:8088/tcp"  # ARI interface
     volumes:
       - ./asterisk/config:/etc/asterisk
-      - ./asterisk/sounds:/var/lib/asterisk/sounds
+      - asterisk-sounds:/var/lib/asterisk/sounds
+      - asterisk-recordings:/var/lib/asterisk/recordings
       - asterisk-logs:/var/log/asterisk
     networks:
       - voice-network
@@ -52,10 +53,21 @@ services:
       - REDIS_URL=redis://redis:6379
       - ENGLISH_BOT_URL=http://english-bot:8001
       - KINYARWANDA_BOT_URL=http://kinyarwanda-bot:8002
+      - ARI_URL=http://asterisk:8088/ari
+      - ARI_APP=chatbot-en
+      - ARI_USER=asterisk
+      - ARI_PASS=changeme
+      - RECORDINGS_PATH=/shared/recordings
+      - SOUNDS_PATH=/shared/sounds
       - LOG_LEVEL=${LOG_LEVEL:-INFO}
       - SESSION_TIMEOUT=${SESSION_TIMEOUT:-300}
+    volumes:
+      - asterisk-recordings:/shared/recordings
+      - asterisk-sounds:/shared/sounds
     depends_on:
       - redis
+      - asterisk
+      - english-bot
     networks:
       - voice-network
     restart: unless-stopped
@@ -74,11 +86,10 @@ services:
     ports:
       - "8001:8001"
     environment:
-      - OPENAI_API_KEY=${OPENAI_API_KEY}
-      - OPENAI_MODEL=${OPENAI_MODEL:-gpt-4}
-      - STT_SERVICE=${STT_SERVICE:-whisper}
-      - TTS_SERVICE=${TTS_SERVICE:-openai}
+      - MODEL_PATH=/app/models
       - LOG_LEVEL=${LOG_LEVEL:-INFO}
+    volumes:
+      - english-bot-models:/app/models
     networks:
       - voice-network
     restart: unless-stopped
@@ -88,7 +99,7 @@ services:
       timeout: 10s
       retries: 3
 
-  # Kinyarwanda voice chatbot service
+  # Kinyarwanda voice chatbot service (placeholder)
   kinyarwanda-bot:
     build:
       context: ./chatbots/kinyarwanda
@@ -98,9 +109,6 @@ services:
       - "8002:8002"
     environment:
       - MODEL_PATH=/models
-      - STT_MODEL=${KINYARWANDA_STT_MODEL:-kinyarwanda-stt}
-      - LLM_MODEL=${KINYARWANDA_LLM_MODEL:-kinyarwanda-llm}
-      - TTS_MODEL=${KINYARWANDA_TTS_MODEL:-kinyarwanda-tts}
       - LOG_LEVEL=${LOG_LEVEL:-INFO}
     volumes:
       - ./chatbots/kinyarwanda/models:/models
@@ -123,3 +131,6 @@ networks:
 volumes:
   redis-data:
   asterisk-logs:
+  asterisk-recordings:
+  asterisk-sounds:
+  english-bot-models:

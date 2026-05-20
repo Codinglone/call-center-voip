@@ -10,11 +10,11 @@ RUN apt-get update && apt-get install -y \
 # Copy requirements file
 COPY requirements.txt .
 
-# Install Python dependencies
-RUN pip install --no-cache-dir -r requirements.txt
+# Install Python dependencies with longer timeout
+RUN pip install --no-cache-dir --default-timeout=300 -r requirements.txt
 
 # Copy application code
-COPY src/ ./src/
+COPY src/main.py ./src/main.py
 
 # Expose port
 EXPOSE 8000
