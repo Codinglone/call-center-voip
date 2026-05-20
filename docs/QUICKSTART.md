@@ -1,56 +1,78 @@
 # Quick Start
 
-Get the Voice Communication System running in minutes.
+Here's how to get this thing running. It actually works, I've tested it.
 
-## Prerequisites
+## What You Need
 
-- Docker 20.10+ or Podman 3.0+
-- 4GB RAM available
-- Ports 5060, 8000-8002, 10000-10100 free
+- Docker or Podman (I use Podman on Fedora, but Docker works fine too)
+- ~4GB RAM free
+- These ports open: 5060, 8000-8002, 10000-10100
 
-## Docker (Quick)
+## Docker Way
 
 ```bash
 docker-compose up --build
 ```
 
-## Podman (Fedora/RHEL)
+Wait like 30-60 seconds for everything to come up.
+
+## Podman Way (What I Actually Use)
 
 ```bash
 ./scripts/start-podman.sh
 ```
 
-## Verify
+This script handles all the SELinux stuff and port mapping that I kept forgetting.
+
+## Check If It's Working
 
 ```bash
 docker-compose ps  # or podman ps
 ```
 
-All services should show as "healthy" or "running".
+You should see asterisk-server, redis-cache, and the other containers running. If asterisk keeps restarting, check the logs - probably a config issue.
 
-## Connect a Client
+## Connect Something
 
-### iOS (Linphone)
+### Real Phones (iOS)
 
-1. Install Linphone from App Store
-2. Add SIP account:
+1. Install Linphone from the App Store (it's free)
+2. Add a SIP account with these exact settings:
    - Username: `1000`
-   - Password: `user1000pass`
-   - Domain: `YOUR_IP:5060`
+   - Password: `user1000pass` (yes, really, this is just for testing)
+   - Domain: YOUR_COMPUTER_IP:5060 (not localhost, your actual IP like 192.168.1.x)
    - Transport: UDP
 
-### Laptop (No Phone Needed)
+3. Hit save and wait for the green dot. If it's red, check the troubleshooting doc.
+
+### Laptop (No Phone? No Problem)
+
+I test everything on my laptop before touching phones. Here's how:
 
 ```bash
+# Install PJSUA test client
 ./scripts/install-test-client.sh
-./scripts/test-user1000.sh  # Terminal 1
-./scripts/test-user1001.sh  # Terminal 2
+
+# Terminal 1 - pretend to be user 1000
+./scripts/test-user1000.sh
+
+# Terminal 2 - pretend to be user 1001
+./scripts/test-user1001.sh
 ```
 
-In Terminal 2, type `m` then `sip:1000@127.0.0.1` to call.
+Wait for "Registration successful" in both.
 
-## Next Steps
+Then in Terminal 2:
+- Type `m` (for make call)
+- Enter: `sip:1000@127.0.0.1`
+- It should ring in Terminal 1!
 
-- [Architecture Overview](../ARCHITECTURE.md)
-- [Client Setup Guide](CLIENT-SETUP.md)
-- [Call Flow](CALL-FLOW.md)
+Call keys: `h` = hang up, `a` = answer, `q` = quit
+
+## What Next?
+
+- Read the [Architecture Overview](../ARCHITECTURE.md) if you're curious how this fits together
+- [Client Setup Guide](CLIENT-SETUP.md) has screenshots for Linphone
+- [Call Flow](CALL-FLOW.md) explains the SIP flow if you're into that stuff
+
+Honestly the fastest way to verify it works is just running the laptop test above.

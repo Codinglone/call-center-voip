@@ -1,16 +1,10 @@
-# Contributing to Call Center VoIP
+# Contributing
 
-Thank you for your interest in contributing to this project!
+Hey, thanks for even looking at this. I'm building this mostly solo but contributions are welcome.
 
-## Development Setup
+## Getting Started
 
-### Prerequisites
-
-- Python 3.11+
-- Docker or Podman
-- Make
-
-### Setup
+You need Python 3.11+, Docker or Podman, and Make.
 
 ```bash
 git clone https://github.com/Codinglone/call-center-voip.git
@@ -18,59 +12,56 @@ cd call-center-voip
 make install
 ```
 
-This will create a virtual environment and install development dependencies.
+That creates a virtual environment and installs dev dependencies.
 
-## Project Structure
+## Project Layout
 
 ```
 call-center-voip/
-├── asterisk/          # Asterisk telephony server configuration
-├── orchestrator/      # Chatbot orchestrator service
-├── chatbots/          # AI chatbot services
+├── asterisk/          # Asterisk config and Dockerfile
+├── orchestrator/      # Chatbot router (empty right now)
+├── chatbots/          # English and Kinyarwanda bot code
 │   ├── english/
 │   └── kinyarwanda/
-├── shared/            # Shared utilities
-├── docs/              # Documentation
-├── scripts/           # Utility scripts
+├── shared/            # Shared utils (also mostly empty)
+├── docs/              # Docs
+├── scripts/           # Shell scripts for testing
 └── tests/             # Test suite
 ```
 
-## Development Workflow
+## Workflow
 
-1. Fork the repository
-2. Create a feature branch: `git checkout -b feature/your-feature`
-3. Make your changes
-4. Run linting and tests: `make check`
-5. Commit your changes
-6. Push to your fork and open a Pull Request
+1. Fork it
+2. Branch: `git checkout -b whatever-youre-working-on`
+3. Make changes
+4. Run `make check` (lint + type check + tests)
+5. Commit and push
+6. Open a PR
 
 ## Code Style
 
-- Python code follows PEP 8
-- Use type hints where possible
-- Run `make format` before committing
+I use ruff for linting and formatting. Run `make format` before committing. Type hints are nice but not required everywhere yet — we're early stage.
 
 ## Testing
 
 ```bash
-# Run all tests
-make test
-
-# Run with coverage
-make test-cov
+make test       # Run pytest
+make test-cov   # With coverage report
 ```
+
+Right now there's just scaffolding tests since the orchestrator and chatbots aren't implemented. Tests will grow as the project does.
 
 ## Commit Messages
 
-Use clear, descriptive commit messages:
+I follow conventional commits out of habit:
 
 ```
-feat: add new endpoint for chatbot routing
-fix: resolve SIP registration timeout
-chore: update Docker base image
-docs: add troubleshooting guide
+feat: add chatbot routing endpoint
+fix: handle SIP registration timeout
+chore: update Asterisk base image
+docs: add testing guide
 ```
 
 ## Questions?
 
-Open an issue on GitHub or reach out to the maintainers.
+Open an issue on GitHub.

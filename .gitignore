@@ -64,3 +64,4 @@ htmlcov/
 
 # Redis
 dump.rdb
+.kiro/

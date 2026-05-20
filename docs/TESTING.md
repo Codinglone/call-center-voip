@@ -1,64 +1,82 @@
-# Testing Guide
+# Testing
 
-## Test with Laptop (No Phone Needed)
+I test everything on my laptop before deploying. Here's my workflow.
 
-Install PJSUA, a command-line SIP client, to test without physical phones.
+## The Laptop Test (No iPhones Needed)
 
-### Setup
+This uses PJSUA, a command-line SIP client. It's ugly but it works.
+
+### Install It
 
 ```bash
 ./scripts/install-test-client.sh
 ```
 
-### Run Test
+This downloads and builds PJSUA. Takes a minute.
+
+### Run Two Users
 
 **Terminal 1:**
 ```bash
 ./scripts/test-user1000.sh
 ```
 
+You should see a bunch of SIP messages ending with something like "Registration successful".
+
 **Terminal 2:**
 ```bash
 ./scripts/test-user1001.sh
 ```
 
-Wait for "Registration successful" in both.
+Same thing.
 
 ### Make a Call
 
-In Terminal 2, type:
-- `m` (make call)
-- Enter: `sip:1000@127.0.0.1`
+In Terminal 2 (user 1001):
+1. Type `m` then hit Enter
+2. Type `sip:1000@127.0.0.1` then hit Enter
+3. Terminal 1 should start ringing!
+4. In Terminal 1, type `a` to answer
+5. You now have a voice call between two terminal windows. Wild.
 
-### Commands During Call
+Controls:
+- `h` - hang up
+- `a` - answer incoming call
+- `m` - make call
+- `q` - quit
 
-| Key | Action |
-|-----|--------|
-| `h` | Hang up |
-| `a` | Answer |
-| `m` | Make call |
-| `q` | Quit |
+### Troubleshooting the Test
 
-## Test with iOS Devices
+If registration fails:
+- Is Asterisk running? `docker ps | grep asterisk`
+- Did you start the right script? `./scripts/test-user1000.sh` not `./test-user1000.sh` (moved those)
+- Try `127.0.0.1` instead of `localhost` - PJSUA is picky
 
-See [Client Setup Guide](CLIENT-SETUP.md) for Linphone configuration.
+## Testing With Real iPhones
 
-## Verify Registration
+See [Client Setup Guide](CLIENT-SETUP.md) for Linphone screenshots. I spent way too long getting the settings right, wrote it all down.
+
+### Verify Phones Actually Registered
 
 ```bash
 docker exec asterisk-server asterisk -rx "pjsip show endpoints"
 ```
 
-Expected output:
+Should show:
 ```
 Endpoint:  1000    Available   0 of 1
 Endpoint:  1001    Available   0 of 1
 ```
 
-## Troubleshooting
+If it says "Unavailable", the phone never actually registered. Usually means wrong password or firewall blocking 5060.
 
-| Issue | Solution |
-|-------|----------|
-| Can't register | Check firewall: `sudo firewall-cmd --add-port=5060/udp --permanent` |
-| No audio | Open RTP ports: `sudo firewall-cmd --add-port=10000-10100/udp --permanent` |
-| Call fails | Check Asterisk logs: `docker logs asterisk-server` |
+## Common Issues I've Hit
+
+| Problem | What I Did |
+|---------|-----------|
+| Can't register | Opened firewall: `sudo firewall-cmd --add-port=5060/udp --permanent` |
+| No audio at all | Opened RTP range: `sudo firewall-cmd --add-port=10000-10100/udp --permanent` |
+| Call drops immediately | Checked logs: `docker logs asterisk-server`, usually a codec mismatch |
+| Audio one-way only | Enabled ICE in Linphone settings |
+
+The firewall thing gets me every time on a fresh Fedora install.

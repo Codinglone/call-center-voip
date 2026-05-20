@@ -2,147 +2,118 @@
 
 [![CI](https://github.com/Codinglone/call-center-voip/actions/workflows/ci.yml/badge.svg)](https://github.com/Codinglone/call-center-voip/actions)
 [![License](https://img.shields.io/github/license/Codinglone/call-center-voip)](LICENSE)
-[![Python](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 
-A distributed voice communication platform that integrates Asterisk telephony with AI-powered chatbots for English and Kinyarwanda languages.
+A voice communication system I built that connects Asterisk telephony with AI chatbots. Right now it handles regular voice calls between users, and eventually it'll route calls to English and Kinyarwanda chatbots too.
 
-## Overview
+## What This Actually Does
 
-This system enables three primary use cases:
+I needed a way to have voice calls with AI assistants in Kinyarwanda. This is what I ended up building:
 
-1. **User-to-User Voice Calls** — Direct voice communication between registered SIP users
-2. **English Chatbot** — Voice conversations with an AI assistant in English
-3. **Kinyarwanda Chatbot** — Voice conversations with an AI assistant in Kinyarwanda
+1. **Person-to-Person Calls** — Regular SIP phone calls between registered users (works now)
+2. **English Chatbot** — Talk to an AI in English (not built yet)
+3. **Kinyarwanda Chatbot** — Talk to an AI in Kinyarwanda (not built yet)
 
-## Architecture
+## How It Works
+
+Your phone (or laptop) connects to an Asterisk server via SIP. Asterisk handles the call routing. Regular calls go straight through. Chatbot calls get routed through an orchestrator service that manages the AI pipeline.
 
 ```
-SIP Clients (iOS/Laptop)
-         │
-         ▼
-┌─────────────────┐
-│  Asterisk 20    │◄── ARI
-│  SIP Server     │    Interface
-└────────┬────────┘
-         │
-    ┌────┴────┐
-    │         │
-    ▼         ▼
-User Calls  Chatbot
-(1000-1999) (2000/3000)
-                │
-                ▼
-      ┌──────────────────┐
-      │  Orchestrator    │
-      │  (FastAPI)       │
-      └────────┬─────────┘
-               │
-      ┌────────┴────────┐
-      │                 │
-      ▼                 ▼
- English Bot      Kinyarwanda Bot
-(Whisper/GPT-4)  (Custom Models)
-      │                 │
-      └────────┬────────┘
-               ▼
-            Redis
+Your Phone
+    |
+    v
+Asterisk 20 (SIP server)
+    |
+    +---> Regular call (1000 -> 1001)
+    |
+    +---> Chatbot call (2000 / 3000)
+            |
+            v
+    Orchestrator (Python/FastAPI)
+            |
+    +-------+-------+
+    |               |
+English Bot     Kinyarwanda Bot
+(Whisper +      (custom models)
+ GPT-4)
+    |
+    v
+  Redis (sessions)
 ```
 
-### Components
+Current state: Asterisk works great. The chatbot parts are planned.
 
-| Component | Technology | Purpose |
-|-----------|-----------|---------|
-| Asterisk Server | Asterisk 20 | SIP registration, call routing, RTP handling |
-| Orchestrator | Python/FastAPI | Session management, audio routing |
-| English Chatbot | OpenAI APIs | Whisper STT, GPT-4, OpenAI TTS |
-| Kinyarwanda Chatbot | Custom ML | Local STT, LLM, TTS models |
-| Redis | Redis 7 | Session state, conversation history |
+## Try It Out
 
-## Quick Start
+You need Docker or Podman, ~4GB RAM, and these ports open: 5060, 8000-8002, 10000-10100.
 
-### Prerequisites
+### Start the Server
 
-- Docker 20.10+ or Podman 3.0+
-- 4GB RAM available
-- Ports 5060, 8000-8002, 10000-10100 free
-
-### Start the System
-
-**Docker:**
+Docker:
 ```bash
 docker-compose up --build
 ```
 
-**Podman (Fedora/RHEL):**
+Podman (Fedora/RHEL):
 ```bash
 ./scripts/start-podman.sh
 ```
 
-### Test Without Phones
+### Test Without a Phone
+
+This is how I test everything before touching real devices:
 
 ```bash
 ./scripts/install-test-client.sh
-./scripts/test-user1000.sh  # Terminal 1
-./scripts/test-user1001.sh  # Terminal 2
+./scripts/test-user1000.sh   # Terminal 1
+./scripts/test-user1001.sh   # Terminal 2
 ```
 
-In Terminal 2, type `m` then `sip:1000@127.0.0.1` to call.
+In Terminal 2, type `m` then `sip:1000@127.0.0.1` to make a call. Terminal 1 will ring. Type `a` to answer. You now have a voice call between two terminal windows.
 
-### Connect iOS (Linphone)
+### Connect a Real Phone
 
+I use Linphone on iOS. Settings:
 - Username: `1000`
 - Password: `user1000pass`
-- Domain: `YOUR_IP:5060`
+- Domain: YOUR_LOCAL_IP:5060 (like `192.168.1.42:5060`)
 - Transport: UDP
 
-See [docs/CLIENT-SETUP.md](docs/CLIENT-SETUP.md) for detailed setup.
+See [docs/CLIENT-SETUP.md](docs/CLIENT-SETUP.md) for the full walkthrough with screenshots.
 
 ## Documentation
 
-| Document | Description |
-|----------|-------------|
-| [docs/QUICKSTART.md](docs/QUICKSTART.md) | Quick start guide |
-| [docs/CLIENT-SETUP.md](docs/CLIENT-SETUP.md) | iOS/Linphone configuration |
-| [docs/CALL-FLOW.md](docs/CALL-FLOW.md) | Technical call flow diagrams |
-| [docs/TESTING.md](docs/TESTING.md) | Testing without phones |
-| [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md) | Common issues and fixes |
-| [ARCHITECTURE.md](ARCHITECTURE.md) | System architecture overview |
-| [CONTRIBUTING.md](CONTRIBUTING.md) | Development setup and workflow |
+- [docs/QUICKSTART.md](docs/QUICKSTART.md) — Get it running fast
+- [docs/CLIENT-SETUP.md](docs/CLIENT-SETUP.md) — Linphone configuration
+- [docs/CALL-FLOW.md](docs/CALL-FLOW.md) — SIP call flow diagrams
+- [docs/TESTING.md](docs/TESTING.md) — How I test without phones
+- [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md) — Things I broke and fixed
+- [ARCHITECTURE.md](ARCHITECTURE.md) — Design decisions
+- [CONTRIBUTING.md](CONTRIBUTING.md) — If you want to hack on this
 
-## Project Status
+## What's Working vs What's Not
 
-| Feature | Status |
-|---------|--------|
-| Asterisk SIP server | ✅ Working |
-| User-to-user calls | ✅ Working |
-| RTP media streaming | ✅ Working |
-| Orchestrator service | 🚧 Planned |
-| English chatbot | 🚧 Planned |
-| Kinyarwanda chatbot | 🚧 Planned |
+| Thing | Status |
+|-------|--------|
+| Asterisk SIP server | Works |
+| User-to-user voice calls | Works |
+| RTP audio streaming | Works |
+| iOS client setup | Tested |
+| Orchestrator service | Not started |
+| English chatbot | Not started |
+| Kinyarwanda chatbot | Not started |
 
-## Development
+## Dev Stuff
 
 ```bash
-# Setup
-make install
-
-# Run checks
-make check
-
-# Run tests
-make test
+make install   # Set up venv
+make check     # Lint + type check + test
+make test      # Run tests
 ```
 
-## Security
+## Security Warning
 
-⚠️ **Current setup is for development only.**
-
-For production:
-- Change default passwords in `pjsip.conf`
-- Enable TLS/SRTP for encrypted calls
-- Implement fail2ban for brute force protection
-- See [.github/SECURITY.md](.github/SECURITY.md)
+This is a development setup. The passwords are hardcoded as `user1000pass`. Don't put this on the internet as-is. For a real deployment you'd want TLS/SRTP encryption, strong passwords, and fail2ban.
 
 ## License
 
-[MIT](LICENSE)
+MIT
