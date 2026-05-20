@@ -170,7 +170,7 @@ fi
 # Check if Asterisk is running
 if ! podman ps | grep -q asterisk-server; then
     echo "Error: Asterisk is not running"
-    echo "Start with: ./start-asterisk-only.sh"
+    echo "Start with: ./scripts/start-asterisk-only.sh"
     exit 1
 fi
 
@@ -216,7 +216,7 @@ q  - Quit
 
 ### Step 1: Start Asterisk
 ```bash
-./start-asterisk-only.sh
+./scripts/start-asterisk-only.sh
 ```
 
 ### Step 2: Open Terminal 1 (User 1000)

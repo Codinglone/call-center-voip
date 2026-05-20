@@ -1,88 +1,74 @@
 #!/bin/bash
-
-# Voice Communication System - Startup Script
+#================================ START SCRIPT ================================
+# Quick start script for Voice Communication System
+# Builds and starts all services, then displays connection info
+#==============================================================================
 
 set -e
 
-echo "=========================================="
-echo "Voice Communication System - Starting"
-echo "=========================================="
-
-# Check if .env exists
-if [ ! -f .env ]; then
-    echo "⚠️  Warning: .env file not found"
-    echo "Creating .env from .env.example..."
-    cp .env.example .env
-    echo "✅ Please edit .env with your configuration before continuing"
-    exit 1
-fi
-
-# Check if Docker is running
-if ! docker info > /dev/null 2>&1; then
-    echo "❌ Error: Docker is not running"
-    echo "Please start Docker and try again"
-    exit 1
-fi
-
-# Check if Docker Compose is available
-if ! command -v docker-compose &> /dev/null; then
-    echo "❌ Error: docker-compose not found"
-    echo "Please install Docker Compose and try again"
-    exit 1
-fi
-
+echo "🚀 Starting Voice Communication System..."
 echo ""
-echo "📦 Building services..."
+
+# Build and start services
+echo "📦 Building Docker containers..."
 docker-compose build
 
 echo ""
-echo "🚀 Starting services..."
+echo "🔄 Starting services..."
 docker-compose up -d
 
 echo ""
-echo "⏳ Waiting for services to be healthy..."
-sleep 10
-
-# Check service health
-echo ""
-echo "🔍 Checking service health..."
-
-services=("orchestrator:8000" "english-bot:8001" "kinyarwanda-bot:8002")
-all_healthy=true
-
-for service in "${services[@]}"; do
-    IFS=':' read -r name port <<< "$service"
-    if curl -f -s "http://localhost:${port}/health" > /dev/null 2>&1; then
-        echo "✅ ${name} is healthy"
-    else
-        echo "⚠️  ${name} is not responding yet"
-        all_healthy=false
-    fi
-done
+echo "⏳ Waiting for services to be healthy (30 seconds)..."
+sleep 30
 
 echo ""
-if [ "$all_healthy" = true ]; then
-    echo "✅ All services are running!"
+echo "✅ Services started! Checking status..."
+docker-compose ps
+
+echo ""
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "📱 iOS CLIENT CONFIGURATION (Linphone)"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo ""
+echo "Your server IP addresses:"
+if command -v ip &> /dev/null; then
+    ip addr show | grep "inet " | grep -v 127.0.0.1 | awk '{print "  • " $2}' | sed 's/\/.*$//'
+elif command -v ifconfig &> /dev/null; then
+    ifconfig | grep "inet " | grep -v 127.0.0.1 | awk '{print "  • " $2}'
 else
-    echo "⚠️  Some services are still starting. Check logs with:"
-    echo "   docker-compose logs -f"
+    echo "  (Run 'ip addr' or 'ifconfig' to find your IP)"
 fi
 
 echo ""
-echo "=========================================="
-echo "Service URLs:"
-echo "=========================================="
-echo "Orchestrator:      http://localhost:8000"
-echo "English Chatbot:   http://localhost:8001"
-echo "Kinyarwanda Bot:   http://localhost:8002"
-echo "Redis:             localhost:6379"
-echo "Asterisk SIP:      localhost:5060"
+echo "Configure Linphone with:"
+echo "  Username: 1000"
+echo "  Password: user1000pass"
+echo "  Domain:   YOUR_IP:5060  (e.g., 192.168.1.100:5060)"
+echo "  Transport: UDP"
 echo ""
-echo "Extension Mapping:"
-echo "  1000-1999: User extensions"
-echo "  2000:      English chatbot"
-echo "  3000:      Kinyarwanda chatbot"
+echo "Available test users: 1000, 1001, 1002"
+echo "Chatbot extensions: 2000 (English), 3000 (Kinyarwanda)"
 echo ""
-echo "View logs: docker-compose logs -f"
-echo "Stop services: docker-compose down"
-echo "=========================================="
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "🔍 USEFUL COMMANDS"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo ""
+echo "View logs:"
+echo "  docker logs -f asterisk-server"
+echo ""
+echo "Check registered endpoints:"
+echo "  docker exec asterisk-server asterisk -rx 'pjsip show endpoints'"
+echo ""
+echo "View active calls:"
+echo "  docker exec asterisk-server asterisk -rx 'core show channels'"
+echo ""
+echo "Access Asterisk CLI:"
+echo "  docker exec -it asterisk-server asterisk -r"
+echo ""
+echo "Stop system:"
+echo "  docker-compose down"
+echo ""
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo ""
+echo "📖 For detailed instructions, see QUICKSTART.md"
+echo ""

@@ -20,7 +20,7 @@ if command -v podman &> /dev/null; then
         echo ""
     fi
     
-    exec ./start-podman.sh
+    exec ./scripts/start-podman.sh
 
 # Fall back to Docker
 elif command -v docker &> /dev/null; then
@@ -34,7 +34,7 @@ elif command -v docker &> /dev/null; then
         exit 1
     fi
     
-    exec ./start.sh
+    exec ./scripts/start.sh
 
 else
     echo "❌ Neither Podman nor Docker found!"

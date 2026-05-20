@@ -252,12 +252,12 @@ Unfortunately, iOS doesn't have built-in network tools, but you can:
 
 1. **Stop Asterisk:**
    ```bash
-   ./stop-asterisk.sh
+   ./scripts/stop-asterisk.sh
    ```
 
 2. **Start Asterisk:**
    ```bash
-   ./start-asterisk-only.sh
+   ./scripts/start-asterisk-only.sh
    ```
 
 3. **Wait 15 seconds**

@@ -24,7 +24,7 @@ if podman ps | grep -q "asterisk-server"; then
     echo -e "${GREEN}✓${NC} Asterisk container is running"
 else
     echo -e "${RED}✗${NC} Asterisk container is not running"
-    echo "  Run: ./start-podman.sh"
+    echo "  Run: ./scripts/start-podman.sh"
     exit 1
 fi
 

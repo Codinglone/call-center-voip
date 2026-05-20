@@ -34,7 +34,7 @@ sudo dnf install podman-compose
 ### Option A: Using the Start Script (Recommended)
 
 ```bash
-./start-podman.sh
+./scripts/start-podman.sh
 ```
 
 This will automatically:
@@ -60,7 +60,7 @@ podman-compose -f podman-compose.yml ps
 
 ```bash
 # Run the test script
-./test-connection-podman.sh
+./scripts/test-connection-podman.sh
 
 # Or manually check
 podman ps

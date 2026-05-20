@@ -5,7 +5,7 @@
 ### Step 1: Install Test Client
 
 ```bash
-./install-test-client.sh
+./scripts/install-test-client.sh
 ```
 
 This installs PJSUA, a command-line SIP client.
@@ -14,14 +14,14 @@ This installs PJSUA, a command-line SIP client.
 
 **Terminal 1:**
 ```bash
-./test-user1000.sh
+./scripts/test-user1000.sh
 ```
 
 Wait until you see "Registration successful"
 
 **Terminal 2:**
 ```bash
-./test-user1001.sh
+./scripts/test-user1001.sh
 ```
 
 Wait until you see "Registration successful"
@@ -147,7 +147,7 @@ Now you can test calls between 1000, 1001, and 1002!
 ### "pjsua: command not found"
 Run the installer:
 ```bash
-./install-test-client.sh
+./scripts/install-test-client.sh
 ```
 
 ### "Registration failed"
@@ -158,7 +158,7 @@ podman ps | grep asterisk
 
 If not running:
 ```bash
-./start-asterisk-only.sh
+./scripts/start-asterisk-only.sh
 ```
 
 ### "Can't make call"

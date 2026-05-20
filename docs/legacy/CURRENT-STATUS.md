@@ -27,7 +27,7 @@
 ### Start Asterisk Server
 
 ```bash
-./start-asterisk-only.sh
+./scripts/start-asterisk-only.sh
 ```
 
 ### Connect from iOS (Linphone)
@@ -155,7 +155,7 @@ podman logs asterisk-server
 podman stop asterisk-server
 podman rm asterisk-server
 podman rmi asterisk-server:latest
-./start-asterisk-only.sh
+./scripts/start-asterisk-only.sh
 ```
 
 ## 📚 Documentation
