@@ -10,7 +10,7 @@ SipForge connects Asterisk telephony with AI chatbots. Right now it handles regu
 I needed a way to have voice calls with AI assistants in Kinyarwanda. This is what I ended up building:
 
 1. **Person-to-Person Calls** — Regular SIP phone calls between registered users (works now)
-2. **English Chatbot** — Talk to an AI in English (not built yet)
+2. **English Chatbot** — Talk to an AI in English (works now)
 3. **Kinyarwanda Chatbot** — Talk to an AI in Kinyarwanda (not built yet)
 
 ## How It Works
@@ -28,23 +28,24 @@ Asterisk 20 (SIP server)
     +---> Chatbot call (2000 / 3000)
             |
             v
-    Orchestrator (Python/FastAPI)
+    Orchestrator (Python/FastAPI + ARI websocket)
             |
     +-------+-------+
     |               |
 English Bot     Kinyarwanda Bot
-(Whisper +      (custom models)
- GPT-4)
+(Whisper +      (not started)
+ Qwen2.5 +
+ Piper)
     |
     v
   Redis (sessions)
 ```
 
-Current state: Asterisk works great. The chatbot parts are planned.
+Current state: Asterisk, orchestrator, and English chatbot are working end-to-end. Call extension 2000 to talk to the English bot.
 
 ## Try It Out
 
-You need Docker or Podman, ~4GB RAM, and these ports open: 5060, 8000-8002, 10000-10100.
+You need Docker or Podman, ~4GB RAM (for CPU inference), and these ports open: 5060, 8000-8002, 10000-10100.
 
 ### Start the Server
 
@@ -58,9 +59,24 @@ Podman (Fedora/RHEL):
 ./scripts/start-podman.sh
 ```
 
-### Test Without a Phone
+### Test the English Chatbot
 
-This is how I test everything before touching real devices:
+The fastest way to test without a softphone:
+
+```bash
+# Start the stack
+docker-compose up --build
+
+# In another terminal, trigger a call via ARI
+curl -s -X POST -u asterisk:changeme \
+  -H "Content-Type: application/json" \
+  -d '{"endpoint":"Local/2000@users","extension":"2000","context":"users","priority":1}' \
+  http://127.0.0.1:8088/ari/channels
+```
+
+This creates a Local channel that enters the `Stasis(chatbot-en)` dialplan. The orchestrator will answer, record, send audio to the English bot, and play back the synthesized response. See [docs/TESTING.md](docs/TESTING.md) for more test scripts.
+
+### Test Person-to-Person Calls Without a Phone
 
 ```bash
 ./scripts/install-test-client.sh
@@ -80,6 +96,16 @@ I use Linphone on iOS. Settings:
 
 See [docs/CLIENT-SETUP.md](docs/CLIENT-SETUP.md) for the full walkthrough with screenshots.
 
+## English Chatbot Pipeline
+
+The English bot (`chatbots/english/`) runs a full voice pipeline inside a single FastAPI service:
+
+1. **STT** — `faster-whisper` (tiny model, ~40MB)
+2. **LLM** — `Qwen/Qwen2.5-0.5B-Instruct` (~1GB, runs on CPU)
+3. **TTS** — `piper-tts` with `en_US-ryan-medium` (~60MB)
+
+Models download automatically on first run (or via `download_models.py`). The orchestrator coordinates the loop: record user speech → send to bot → play response → repeat.
+
 ## Documentation
 
 - [docs/QUICKSTART.md](docs/QUICKSTART.md) — Get it running fast
@@ -98,8 +124,9 @@ See [docs/CLIENT-SETUP.md](docs/CLIENT-SETUP.md) for the full walkthrough with s
 | User-to-user voice calls | Works |
 | RTP audio streaming | Works |
 | iOS client setup | Tested |
-| Orchestrator service | Not started |
-| English chatbot | Not started |
+| ARI websocket integration | Works |
+| Orchestrator service | Works |
+| English chatbot (Whisper + Qwen + Piper) | Works |
 | Kinyarwanda chatbot | Not started |
 
 ## Dev Stuff
