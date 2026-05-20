@@ -1,5 +1,5 @@
 """
-Shared configuration management utilities for Voice Communication System.
+Shared configuration management utilities for SipForge.
 """
 
 import os

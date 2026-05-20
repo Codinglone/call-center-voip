@@ -1,9 +1,9 @@
 #!/bin/bash
 
-# Voice Communication System - Health Check Script
+# SipForge - Health Check Script
 
 echo "=========================================="
-echo "Voice Communication System - Health Check"
+echo "SipForge - Health Check"
 echo "=========================================="
 echo ""
 

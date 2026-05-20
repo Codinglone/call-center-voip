@@ -1,12 +1,12 @@
 #!/bin/bash
 #================================ PODMAN START SCRIPT ================================
-# Quick start script for Voice Communication System using Podman
+# Quick start script for SipForge using Podman
 # Builds and starts all services, then displays connection info
 #====================================================================================
 
 set -e
 
-echo "🚀 Starting Voice Communication System with Podman..."
+echo "🚀 Starting SipForge with Podman..."
 echo ""
 
 # Check if podman-compose is available

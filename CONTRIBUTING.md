@@ -1,4 +1,4 @@
-# Contributing
+# Contributing to SipForge
 
 Hey, thanks for even looking at this. I'm building this mostly solo but contributions are welcome.
 
@@ -7,8 +7,8 @@ Hey, thanks for even looking at this. I'm building this mostly solo but contribu
 You need Python 3.11+, Docker or Podman, and Make.
 
 ```bash
-git clone https://github.com/Codinglone/call-center-voip.git
-cd call-center-voip
+git clone https://github.com/Codinglone/SipForge.git
+cd SipForge
 make install
 ```
 
@@ -17,7 +17,7 @@ That creates a virtual environment and installs dev dependencies.
 ## Project Layout
 
 ```
-call-center-voip/
+SipForge/
 ├── asterisk/          # Asterisk config and Dockerfile
 ├── orchestrator/      # Chatbot router (empty right now)
 ├── chatbots/          # English and Kinyarwanda bot code

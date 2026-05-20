@@ -6,7 +6,7 @@
 
 set -e
 
-echo "🔍 Testing Voice Communication System..."
+echo "🔍 Testing SipForge..."
 echo ""
 
 # Colors for output

@@ -1,6 +1,6 @@
 # Call Flow Documentation
 
-This document explains how calls flow through the Voice Communication System.
+This document explains how calls flow through the SipForge.
 
 ## User-to-User Call Flow
 

@@ -8,7 +8,7 @@ RUFF := $(VENV)/bin/ruff
 MYPY := $(VENV)/bin/mypy
 
 help:
-	@echo "Call Center VoIP - Development Commands"
+	@echo "SipForge - Development Commands"
 	@echo "========================================"
 	@echo "make install    - Create venv and install dev deps"
 	@echo "make build      - Build all Docker images"

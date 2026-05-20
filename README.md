@@ -1,9 +1,9 @@
-# Call Center VoIP
+# SipForge
 
-[![CI](https://github.com/Codinglone/call-center-voip/actions/workflows/ci.yml/badge.svg)](https://github.com/Codinglone/call-center-voip/actions)
-[![License](https://img.shields.io/github/license/Codinglone/call-center-voip)](LICENSE)
+[![CI](https://github.com/Codinglone/SipForge/actions/workflows/ci.yml/badge.svg)](https://github.com/Codinglone/SipForge/actions)
+[![License](https://img.shields.io/github/license/Codinglone/SipForge)](LICENSE)
 
-A voice communication system I built that connects Asterisk telephony with AI chatbots. Right now it handles regular voice calls between users, and eventually it'll route calls to English and Kinyarwanda chatbots too.
+SipForge connects Asterisk telephony with AI chatbots. Right now it handles regular voice calls between users, and eventually it'll route calls to English and Kinyarwanda chatbots too.
 
 ## What This Actually Does
 

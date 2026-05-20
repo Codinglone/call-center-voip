@@ -6,7 +6,7 @@
 
 set -e
 
-echo "🔍 Testing Voice Communication System (Podman)..."
+echo "🔍 Testing SipForge (Podman)..."
 echo ""
 
 # Colors for output

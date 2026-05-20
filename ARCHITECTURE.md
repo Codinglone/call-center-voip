@@ -1,4 +1,4 @@
-# Voice Communication System - Architecture Overview
+# SipForge - Architecture Overview
 
 ## System Components
 

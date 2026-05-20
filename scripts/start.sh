@@ -1,12 +1,12 @@
 #!/bin/bash
 #================================ START SCRIPT ================================
-# Quick start script for Voice Communication System
+# Quick start script for SipForge
 # Builds and starts all services, then displays connection info
 #==============================================================================
 
 set -e
 
-echo "🚀 Starting Voice Communication System..."
+echo "🚀 Starting SipForge..."
 echo ""
 
 # Build and start services

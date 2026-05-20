@@ -3,7 +3,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "call-center-voip"
+name = "SipForge"
 version = "0.1.0"
 description = "Distributed voice communication platform with AI-powered chatbots"
 readme = "README.md"
@@ -50,10 +50,10 @@ dev = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/Codinglone/call-center-voip"
-Repository = "https://github.com/Codinglone/call-center-voip"
-Documentation = "https://github.com/Codinglone/call-center-voip#readme"
-Issues = "https://github.com/Codinglone/call-center-voip/issues"
+Homepage = "https://github.com/Codinglone/SipForge"
+Repository = "https://github.com/Codinglone/SipForge"
+Documentation = "https://github.com/Codinglone/SipForge#readme"
+Issues = "https://github.com/Codinglone/SipForge/issues"
 
 [tool.ruff]
 target-version = "py311"
